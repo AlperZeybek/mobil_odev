@@ -1,14 +1,16 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { colors } from '../styles/colors';
+import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { layout } from '../styles/layout';
+import { useTheme } from '../context/ThemeContext';
 
-const CATEGORIES = ['Studying', 'Coding', 'Project', 'Reading'];
+const CATEGORIES = ['Studying', 'Coding', 'Project', 'Reading', 'Revision', 'Break'];
 
 /**
  * Category picker component
  */
 export const CategoryPicker = ({ selectedCategory, onSelectCategory }) => {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
   const handleSelect = (category) => {
     onSelectCategory(category);
   };
@@ -25,6 +27,7 @@ export const CategoryPicker = ({ selectedCategory, onSelectCategory }) => {
               selectedCategory === category && styles.categoryButtonSelected,
             ]}
             onPress={() => handleSelect(category)}
+            activeOpacity={0.7}
           >
             <Text
               style={[
@@ -41,42 +44,54 @@ export const CategoryPicker = ({ selectedCategory, onSelectCategory }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    marginVertical: layout.marginLarge,
-  },
-  label: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: colors.text,
-    marginBottom: layout.spacing,
-  },
-  categoriesContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: layout.spacing,
-  },
-  categoryButton: {
-    paddingHorizontal: layout.paddingLarge,
-    paddingVertical: layout.padding,
-    borderRadius: layout.borderRadius,
-    backgroundColor: colors.surface,
-    borderWidth: 2,
-    borderColor: colors.border,
-    minWidth: 100,
-    alignItems: 'center',
-  },
-  categoryButtonSelected: {
-    backgroundColor: colors.primary,
-    borderColor: colors.primary,
-  },
-  categoryText: {
-    fontSize: 14,
-    fontWeight: '500',
-    color: colors.text,
-  },
-  categoryTextSelected: {
-    color: colors.surface,
-  },
-});
+const createStyles = (colors) =>
+  StyleSheet.create({
+    container: {
+      marginTop: layout.margin,
+      marginBottom: layout.margin,
+      width: '100%',
+    },
+    label: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: colors.text,
+      marginBottom: layout.marginXS,
+      letterSpacing: 0.3,
+    },
+    categoriesContainer: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      justifyContent: 'space-between',
+      width: '100%',
+    },
+    categoryButton: {
+      width: '48%',
+      marginBottom: layout.spacing,
+      paddingVertical: layout.padding,
+      paddingHorizontal: layout.padding,
+      borderRadius: layout.borderRadius,
+      backgroundColor: colors.surface,
+      borderWidth: 1.5,
+      borderColor: colors.border,
+      alignItems: 'center',
+      justifyContent: 'center',
+      ...layout.shadow,
+      minHeight: 50,
+    },
+    categoryButtonSelected: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+      ...layout.shadowMedium,
+    },
+    categoryText: {
+      fontSize: 15,
+      fontWeight: '600',
+      color: colors.text,
+      letterSpacing: 0.2,
+    },
+    categoryTextSelected: {
+      color: colors.textInverse,
+      fontWeight: '700',
+    },
+  });
 

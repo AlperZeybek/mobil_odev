@@ -16,7 +16,7 @@ import {
 } from '../data/database';
 import { getLastNDays } from '../utils/dateUtils';
 import { prepareBarChartData, preparePieChartData } from '../utils/chartUtils';
-import { colors } from '../styles/colors';
+import { useTheme } from '../context/ThemeContext';
 import { layout } from '../styles/layout';
 
 const screenWidth = Dimensions.get('window').width;
@@ -25,6 +25,8 @@ const screenWidth = Dimensions.get('window').width;
  * Reports screen with statistics and charts
  */
 export const ReportsScreen = () => {
+  const { colors, mode } = useTheme();
+  const styles = createStyles(colors);
   const [stats, setStats] = useState({
     todayTotal: 0,
     allTimeTotal: 0,
@@ -69,8 +71,14 @@ export const ReportsScreen = () => {
     backgroundGradientFrom: colors.surface,
     backgroundGradientTo: colors.surface,
     decimalPlaces: 0,
-    color: (opacity = 1) => `rgba(99, 102, 241, ${opacity})`,
-    labelColor: (opacity = 1) => `rgba(30, 41, 59, ${opacity})`,
+    color: (opacity = 1) =>
+      mode === 'dark'
+        ? `rgba(129, 135, 255, ${opacity})`
+        : `rgba(91, 103, 234, ${opacity})`,
+    labelColor: (opacity = 1) =>
+      mode === 'dark'
+        ? `rgba(229, 231, 235, ${opacity})`
+        : `rgba(26, 32, 44, ${opacity})`,
     style: {
       borderRadius: layout.borderRadius,
     },
@@ -79,6 +87,8 @@ export const ReportsScreen = () => {
       strokeWidth: '2',
       stroke: colors.primary,
     },
+    fillShadowGradient: colors.primary,
+    fillShadowGradientOpacity: 0.1,
   };
 
   return (
@@ -155,51 +165,123 @@ export const ReportsScreen = () => {
           </Text>
         </View>
       )}
+
+      {allSessions.length > 0 && (
+        <View style={styles.historySection}>
+          <Text style={styles.sectionTitle}>Session History</Text>
+          {allSessions.map((session) => {
+            const start = new Date(session.start_time);
+            const end = session.end_time ? new Date(session.end_time) : null;
+            const dateLabel = start.toLocaleDateString(undefined, {
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+            });
+            const timeLabel = start.toLocaleTimeString(undefined, {
+              hour: '2-digit',
+              minute: '2-digit',
+            });
+
+            return (
+              <View key={session.id?.toString() ?? `${session.start_time}-${session.category}`} style={styles.historyItem}>
+                <View style={styles.historyRow}>
+                  <Text style={styles.historyCategory}>{session.category || 'Unknown'}</Text>
+                  <Text style={styles.historyDuration}>
+                    {session.duration_minutes ?? 0} min
+                  </Text>
+                </View>
+                <View style={styles.historyRow}>
+                  <Text style={styles.historyMeta}>
+                    {dateLabel} • {timeLabel}
+                  </Text>
+                  <Text style={styles.historyMeta}>
+                    Distractions: {session.distraction_count ?? 0}
+                  </Text>
+                </View>
+              </View>
+            );
+          })}
+        </View>
+      )}
     </ScrollView>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-  },
-  contentContainer: {
-    padding: layout.paddingLarge,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: colors.text,
-    marginTop: layout.marginLarge,
-    marginBottom: layout.margin,
-  },
-  chartContainer: {
-    backgroundColor: colors.surface,
-    borderRadius: layout.borderRadius,
-    padding: layout.padding,
-    marginBottom: layout.marginLarge,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
+const createStyles = (colors) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.background,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 3.84,
-    elevation: 5,
-  },
-  chart: {
-    borderRadius: layout.borderRadius,
-  },
-  emptyState: {
-    padding: layout.paddingLarge * 2,
-    alignItems: 'center',
-  },
-  emptyStateText: {
-    fontSize: 16,
-    color: colors.textSecondary,
-    textAlign: 'center',
-  },
-});
-
+    contentContainer: {
+      padding: layout.paddingLarge,
+      paddingBottom: layout.paddingXL,
+    },
+    sectionTitle: {
+      fontSize: 22,
+      fontWeight: '700',
+      color: colors.text,
+      marginTop: layout.marginXL,
+      marginBottom: layout.marginMD,
+      letterSpacing: -0.3,
+    },
+    chartContainer: {
+      backgroundColor: colors.surface,
+      borderRadius: layout.borderRadiusMD,
+      padding: layout.paddingMD,
+      marginBottom: layout.marginLarge,
+      alignItems: 'center',
+      ...layout.shadowMedium,
+      borderWidth: 1,
+      borderColor: colors.borderLight,
+    },
+    chart: {
+      borderRadius: layout.borderRadius,
+    },
+    emptyState: {
+      padding: layout.paddingXL * 2,
+      alignItems: 'center',
+      marginTop: layout.marginXL,
+    },
+    emptyStateText: {
+      fontSize: 15,
+      color: colors.textSecondary,
+      textAlign: 'center',
+      lineHeight: 22,
+      fontWeight: '500',
+    },
+    historySection: {
+      marginTop: layout.marginXL,
+      paddingTop: layout.padding,
+      borderTopWidth: 1,
+      borderTopColor: colors.borderLight,
+    },
+    historyItem: {
+      backgroundColor: colors.surface,
+      borderRadius: layout.borderRadius,
+      padding: layout.padding,
+      marginBottom: layout.marginXS,
+      borderWidth: 1,
+      borderColor: colors.borderLight,
+    },
+    historyRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 4,
+    },
+    historyCategory: {
+      fontSize: 15,
+      fontWeight: '700',
+      color: colors.text,
+    },
+    historyDuration: {
+      fontSize: 14,
+      fontWeight: '600',
+      color: colors.primary,
+    },
+    historyMeta: {
+      fontSize: 12,
+      color: colors.textSecondary,
+    },
+  });

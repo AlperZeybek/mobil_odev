@@ -7,14 +7,17 @@ import {
   StyleSheet,
   ScrollView,
 } from 'react-native';
-import { colors } from '../styles/colors';
 import { layout } from '../styles/layout';
 import { formatTime } from '../utils/dateUtils';
+import { useTheme } from '../context/ThemeContext';
 
 /**
  * Session summary modal component
  */
 export const SessionSummaryModal = ({ visible, session, onClose }) => {
+  const { colors } = useTheme();
+  const styles = createStyles(colors);
+
   if (!session) return null;
 
   const formatDateTime = (dateString) => {
@@ -79,72 +82,73 @@ export const SessionSummaryModal = ({ visible, session, onClose }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  overlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.6)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: layout.paddingLarge,
-  },
-  modalContainer: {
-    backgroundColor: colors.surface,
-    borderRadius: layout.borderRadiusXL,
-    padding: layout.paddingXL,
-    width: '90%',
-    maxWidth: 400,
-    maxHeight: '85%',
-    ...layout.shadowLarge,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: '700',
-    color: colors.text,
-    marginBottom: layout.marginLarge,
-    textAlign: 'center',
-    letterSpacing: -0.5,
-  },
-  content: {
-    marginVertical: layout.marginMD,
-  },
-  row: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: layout.paddingMD,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
-  },
-  label: {
-    fontSize: 15,
-    color: colors.textSecondary,
-    fontWeight: '600',
-    letterSpacing: 0.2,
-  },
-  value: {
-    fontSize: 16,
-    color: colors.text,
-    fontWeight: '700',
-    textAlign: 'right',
-    flex: 1,
-    marginLeft: layout.spacingLarge,
-  },
-  warning: {
-    color: colors.warning,
-  },
-  closeButton: {
-    backgroundColor: colors.primary,
-    paddingVertical: layout.paddingMD,
-    borderRadius: layout.borderRadius,
-    marginTop: layout.marginMD,
-    alignItems: 'center',
-    ...layout.shadowMedium,
-  },
-  closeButtonText: {
-    color: colors.textInverse,
-    fontSize: 16,
-    fontWeight: '700',
-    letterSpacing: 0.5,
-  },
-});
+const createStyles = (colors) =>
+  StyleSheet.create({
+    overlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: layout.paddingLarge,
+    },
+    modalContainer: {
+      backgroundColor: colors.surface,
+      borderRadius: layout.borderRadiusXL,
+      padding: layout.paddingXL,
+      width: '90%',
+      maxWidth: 400,
+      maxHeight: '85%',
+      ...layout.shadowLarge,
+    },
+    title: {
+      fontSize: 26,
+      fontWeight: '700',
+      color: colors.text,
+      marginBottom: layout.marginLarge,
+      textAlign: 'center',
+      letterSpacing: -0.5,
+    },
+    content: {
+      marginVertical: layout.marginMD,
+    },
+    row: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: layout.paddingMD,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.borderLight,
+    },
+    label: {
+      fontSize: 15,
+      color: colors.textSecondary,
+      fontWeight: '600',
+      letterSpacing: 0.2,
+    },
+    value: {
+      fontSize: 16,
+      color: colors.text,
+      fontWeight: '700',
+      textAlign: 'right',
+      flex: 1,
+      marginLeft: layout.spacingLarge,
+    },
+    warning: {
+      color: colors.warning,
+    },
+    closeButton: {
+      backgroundColor: colors.primary,
+      paddingVertical: layout.paddingMD,
+      borderRadius: layout.borderRadius,
+      marginTop: layout.marginMD,
+      alignItems: 'center',
+      ...layout.shadowMedium,
+    },
+    closeButtonText: {
+      color: colors.textInverse,
+      fontSize: 16,
+      fontWeight: '700',
+      letterSpacing: 0.5,
+    },
+  });
 

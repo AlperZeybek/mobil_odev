@@ -60,21 +60,44 @@ export const preparePieChartData = (sessions) => {
 };
 
 /**
- * Get color for category based on index
+ * Get color for category
+ * Uses distinct, mid-contrast colors that work in both light and dark themes.
  */
 const getColorForCategory = (category, totalCategories) => {
-  const colors = [
-    '#6366f1', // indigo
-    '#8b5cf6', // purple
-    '#ec4899', // pink
-    '#f59e0b', // amber
-    '#10b981', // emerald
-    '#06b6d4', // cyan
-    '#f97316', // orange
-    '#84cc16', // lime
-  ];
-  
-  const index = category.charCodeAt(0) % colors.length;
-  return colors[index];
+  const normalized = (category || '').toLowerCase();
+
+  // Fixed colors for known categories so they are easy to distinguish
+  switch (normalized) {
+    case 'studying':
+      return '#4F46E5'; // indigo
+    case 'coding':
+      return '#7C3AED'; // purple
+    case 'project':
+      return '#10B981'; // emerald
+    case 'reading':
+      return '#F59E0B'; // amber
+    case 'revision':
+      return '#EC4899'; // pink
+    case 'break':
+      return '#06B6D4'; // cyan
+    default: {
+      const fallbackColors = [
+        '#6366F1', // indigo
+        '#8B5CF6', // purple
+        '#F97316', // orange
+        '#22C55E', // green
+        '#0EA5E9', // sky
+        '#E11D48', // rose
+        '#A855F7', // violet
+        '#14B8A6', // teal
+      ];
+
+      const index =
+        normalized && normalized.length > 0
+          ? normalized.charCodeAt(0) % fallbackColors.length
+          : 0;
+      return fallbackColors[index];
+    }
+  }
 };
 
